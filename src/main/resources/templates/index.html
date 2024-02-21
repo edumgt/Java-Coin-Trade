@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout}">
+<head>
+    <title>Main Page</title>
+</head>
+<body layout:fragment="content">
+
+    <div class="main-banner">
+        <div>
+            <div class="mb-4"><h1>암호화폐 모의투자, 무료로 시작하세요.</h1></div>
+            <p>본 거래소는 업비트(<a href="https://www.upbit.com">https://www.upbit.com</a>)의 실시간 데이터를 기반으로 운영됩니다.</p>
+            <p>상업적인 목적이 없는 개인이 운영하는 거래소입니다.</p>
+            <button th:onclick="|location.href='@{/trade/order}'|" class="btn btn-primary btn-lg" type="button">거래소 둘러보기</button>
+            <button th:if="${session.loginMember == null}" th:onclick="|location.href='@{/member/login}'|" class="btn btn-info btn-lg" type="button">로그인</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="w-75" style="margin-left: auto; margin-right: auto;">
+            <div class="mb-3 d-flex">
+                <h2>시가총액 Top 100</h2>
+                <span class="mt-4" style="margin-left: auto; font-size: 13px">* 코인마켓캡 기준 시가총액 Top100 입니다. 단순 참고용으로, 업비트 거래소와 다를 수 있습니다.<br>* 최신 데이터는 매 시간 정각에 업데이트 됩니다.</span>
+            </div>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col"></th><!-- logo -->
+                        <th scope="col">이름</th>
+                        <th scope="col" class="text-align-table-right">가격 (USD)</th>
+                        <th scope="col" class="text-align-table-right">시가총액 (USD)</th>
+                        <th scope="col" class="text-align-table-right">변동률 (24H)</th>
+                        <th scope="col" class="text-align-table-right">변동률 (7D)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="crypto : ${cryptoRankList}">
+                        <th th:text="${crypto.id}" scope="row">id</th>
+                        <td style="text-align: right;"><img style="max-width: 32px" th:src="|https://s2.coinmarketcap.com/static/img/coins/32x32/${crypto.apiCryptoId}.png|"></td>
+                        <td th:text="|${crypto.name} (${crypto.symbol})|">name</td>
+                        <td class="text-align-table-right" th:text="${crypto.quote.usd.price}">price</td>
+                        <td class="text-align-table-right fw-bold" th:text="'$' + ${#numbers.formatInteger(crypto.quote.usd.marketCap, 1, 'COMMA')}">marketCap</td>
+                        <td class="text-align-table-right" th:style="${crypto.quote.usd.percentChange24h} > 0 ? 'color: #0ea600' : 'color: red'"
+                            th:text="${crypto.quote.usd.percentChange24h} > 0 ? '+' + ${#numbers.formatDecimal(crypto.quote.usd.percentChange24h, 1, 2)} + '%' : ${#numbers.formatDecimal(crypto.quote.usd.percentChange24h, 1, 2)} + '%'">percentChange24h</td>
+                        <td class="text-align-table-right" th:style="${crypto.quote.usd.percentChange7d} > 0 ? 'color: #0ea600' : 'color: red'"
+                            th:text="${crypto.quote.usd.percentChange7d} > 0 ? '+' + ${#numbers.formatDecimal(crypto.quote.usd.percentChange7d, 1, 2)} + '%' : ${#numbers.formatDecimal(crypto.quote.usd.percentChange7d, 1, 2)} + '%'">percentChange7d</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
