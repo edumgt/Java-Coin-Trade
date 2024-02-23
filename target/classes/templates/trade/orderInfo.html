@@ -43,7 +43,10 @@
 
             // 암호화폐 정보 비동기 요청
             const xhr = new XMLHttpRequest();
-            xhr.open('GET', '/api/crypto/' + marketCode);
+            
+            //xhr.open('GET', '/api/crypto/' + marketCode);
+            xhr.open('GET', '/api/crypto/KRW-BTC');
+            
             xhr.send();
             xhr.responseType = "json"; // 응답 데이터 타입 설정
             xhr.onload = () => {
@@ -66,6 +69,19 @@
                     document.getElementById('buyMarketCode').value = marketCode; // 넘겨줄 매수 암호화폐 market code
                     document.getElementById('sellMarketCode').value = marketCode; // 넘겨줄 매도 암호화폐 market code
                 } else { // 실패
+                    
+                    document.getElementById('crypto_korean_name').innerText = "비트코인"; // 상단 한글명
+                    document.getElementById('crypto_symbol_name').innerText = "KRW-BTC"; // 상단 마켓코드
+                    document.getElementById('buy_symbol_name').innerText = `비트코인(BTC)`; // 하단 매수 마켓코드
+                    document.getElementById('sell_symbol_name').innerText = `비트코인(BTC)`; // 하단 매도 마켓코드
+                    document.getElementById('holdCryptoCount').innerText = resultJson.buyCryptoCount; // 매도 가능 개수
+                    document.getElementById('holdCryptoSymbol').innerText = cryptoSymbol; // 매도 가능 개수
+                    document.getElementById('sellCryptoSymbol').innerText = `(BTC)`; // 매도 개수 단위( ex) BTC, ETH ..)
+
+                    document.getElementById('buyMarketCode').value = "KRW-BTC"; // 넘겨줄 매수 암호화폐 market code
+                    document.getElementById('sellMarketCode').value = "KRW-BTC"; // 넘겨줄 매도 암호화폐 market code
+                    
+                    
                     console.error(xhr.status, xhr.statusText);
                 }
             };

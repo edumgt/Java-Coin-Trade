@@ -43,7 +43,9 @@ public class ApiController {
 
             if (loginMember != null) {
                 Long findCryptoId = findUpbitCryptoOne.getId(); // 암호화폐 고유 id
-                HoldCrypto findHoldCryptoOne = holdCryptoRepository.findByMemberIdAndUpbitMarketId(loginMember.getId(), findCryptoId);
+                
+                HoldCrypto findHoldCryptoOne 
+                = holdCryptoRepository.findByMemberIdAndUpbitMarketId(loginMember.getId(), findCryptoId);
 
                 // 매수한 암호화폐 정보가 있으면 넣어준다
                 if (findHoldCryptoOne != null) {
