@@ -44,8 +44,8 @@
             // 암호화폐 정보 비동기 요청
             const xhr = new XMLHttpRequest();
             
-            //xhr.open('GET', '/api/crypto/' + marketCode);
-            xhr.open('GET', '/api/crypto/KRW-BTC');
+            xhr.open('GET', '/api/crypto/' + marketCode);
+            //xhr.open('GET', '/api/crypto/KRW-BTC');
             
             xhr.send();
             xhr.responseType = "json"; // 응답 데이터 타입 설정
