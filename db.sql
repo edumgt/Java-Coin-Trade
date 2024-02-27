@@ -21,16 +21,16 @@ USE `mockinv`;
 CREATE TABLE IF NOT EXISTS `crypto_rank` (
   `crypto_rank_id` bigint(20) NOT NULL AUTO_INCREMENT,
   `api_crypto_id` int(11) DEFAULT NULL,
-  `name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `name` varchar(255) DEFAULT NULL,
   `market_cap` decimal(38,2) DEFAULT NULL,
   `percent_change24h` float NOT NULL,
   `percent_change7d` float NOT NULL,
   `price` float NOT NULL,
-  `symbol` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `symbol` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`crypto_rank_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- 테이블 데이터 mockinv.crypto_rank:~0 rows (대략적) 내보내기
+-- 테이블 데이터 mockinv.crypto_rank:~100 rows (대략적) 내보내기
 /*!40000 ALTER TABLE `crypto_rank` DISABLE KEYS */;
 INSERT INTO `crypto_rank` (`crypto_rank_id`, `api_crypto_id`, `name`, `market_cap`, `percent_change24h`, `percent_change7d`, `price`, `symbol`) VALUES
 	(1, 1, 'Bitcoin', 997019270708.01, -1.31701, -2.37311, 50775.4, 'BTC'),
@@ -148,12 +148,13 @@ CREATE TABLE IF NOT EXISTS `hold_crypto` (
   KEY `FKf7ry5bj7khsx7ghmjdk0h5w5b` (`upbit_market_id`),
   CONSTRAINT `FKf7ry5bj7khsx7ghmjdk0h5w5b` FOREIGN KEY (`upbit_market_id`) REFERENCES `upbit_market` (`upbit_market_id`),
   CONSTRAINT `FKj5gx2leqo6dkwrg5isrvsfg7g` FOREIGN KEY (`member_id`) REFERENCES `member` (`member_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- 테이블 데이터 mockinv.hold_crypto:~0 rows (대략적) 내보내기
 /*!40000 ALTER TABLE `hold_crypto` DISABLE KEYS */;
 INSERT INTO `hold_crypto` (`hold_crypto_id`, `buy_average`, `buy_crypto_count`, `buy_total_krw`, `member_id`, `upbit_market_id`) VALUES
-	(1, 71004000, 0.01267534, 900000, 1, 1);
+	(1, 71004000, 0.01267534, 900000, 1, 1),
+	(2, 4061000, 0.22408274, 910000, 1, 1027);
 /*!40000 ALTER TABLE `hold_crypto` ENABLE KEYS */;
 
 -- 테이블 mockinv.member 구조 내보내기
@@ -169,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `member` (
 -- 테이블 데이터 mockinv.member:~0 rows (대략적) 내보내기
 /*!40000 ALTER TABLE `member` DISABLE KEYS */;
 INSERT INTO `member` (`member_id`, `asset`, `email`, `password`, `username`) VALUES
-	(1, 9100003, 'jj@jj.com', '$2a$10$NdyqwR1CQUhS79ZkL3LtfeZ70ZMR88VgYK2JGuzflPs6Kl.N24YlC', '이코인');
+	(1, 8190003, 'jj@jj.com', '$2a$10$NdyqwR1CQUhS79ZkL3LtfeZ70ZMR88VgYK2JGuzflPs6Kl.N24YlC', '이코인');
 /*!40000 ALTER TABLE `member` ENABLE KEYS */;
 
 -- 테이블 mockinv.upbit_market 구조 내보내기
@@ -179,12 +180,14 @@ CREATE TABLE IF NOT EXISTS `upbit_market` (
   `korean_name` varchar(255) DEFAULT NULL,
   `market_code` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`upbit_market_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1028 DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
 
--- 테이블 데이터 mockinv.upbit_market:~0 rows (대략적) 내보내기
+-- 테이블 데이터 mockinv.upbit_market:~2 rows (대략적) 내보내기
 /*!40000 ALTER TABLE `upbit_market` DISABLE KEYS */;
 INSERT INTO `upbit_market` (`upbit_market_id`, `english_name`, `korean_name`, `market_code`) VALUES
-	(1, 'Bitcoin', '비트코인', 'KRW-BTC');
+	(1, 'Bitcoin', '비트코인', 'KRW-BTC'),
+	(825, 'USDT', 'Tether USDt', 'KRW-USD'),
+	(1027, 'Ethereum', '이더리움', 'KRW-ETH');
 /*!40000 ALTER TABLE `upbit_market` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
