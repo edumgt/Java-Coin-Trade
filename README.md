@@ -102,12 +102,18 @@ src/main/resources
 - MariaDB 10.x
 
 ### 1. DB 준비
-MariaDB 실행 후 `db.sql`로 초기 스키마/샘플 데이터를 생성합니다.
+Docker 기반 DB 준비 + `db.sql` 반영 + 애플리케이션 DB 연동 설정은 아래 스크립트로 한 번에 처리할 수 있습니다.
 
-예시(docker):
 ```bash
-docker run --name mysql-container -e MYSQL_ROOT_PASSWORD=123456 -d -p 3306:3306 myariadb:latest
+./scripts/setup-docker-db.sh
 ```
+
+스크립트가 수행하는 작업:
+- MariaDB 컨테이너 생성/기동
+- `db.sql` import
+- `src/main/resources/application.properties`의 datasource 값을 로컬 Docker DB로 변경
+
+환경변수로 컨테이너명/비밀번호/포트 등을 변경할 수 있습니다.
 
 ### 2. 설정 파일 확인
 `src/main/resources/application.properties`의 DB 접속정보를 현재 환경에 맞게 수정하세요.
