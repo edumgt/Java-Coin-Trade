@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: crypto-mock-dev
+
+resources:
+  - ../../base
+
+patches:
+  - target:
+      kind: Namespace
+      name: crypto-mock
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: crypto-mock-dev
+  - target:
+      kind: Deployment
+      name: crypto-mock-app
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
+      - op: replace
+        path: /spec/template/spec/containers/0/image
+        value: java-crypto-mock-app:dev
+  - target:
+      kind: PersistentVolumeClaim
+      name: mariadb-pvc
+    patch: |-
+      - op: replace
+        path: /spec/resources/requests/storage
+        value: 5Gi
