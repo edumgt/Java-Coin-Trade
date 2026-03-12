@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: crypto-mock-config
+data:
+  SPRING_DATASOURCE_URL: jdbc:mariadb://mariadb:3306/mockinv?useUnicode=true&characterEncoding=utf8
+  SPRING_DATASOURCE_USERNAME: mockinv
+  SPRING_JPA_HIBERNATE_DDL_AUTO: update
+  MARIADB_DATABASE: mockinv
+  MARIADB_USER: mockinv

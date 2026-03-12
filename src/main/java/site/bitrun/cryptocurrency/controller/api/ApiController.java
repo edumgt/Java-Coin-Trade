@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import site.bitrun.cryptocurrency.domain.HoldCrypto;
 import site.bitrun.cryptocurrency.domain.Member;
+import site.bitrun.cryptocurrency.global.api.domestic.dto.DomesticExchangePriceResponseDto;
+import site.bitrun.cryptocurrency.global.api.domestic.service.DomesticExchangePriceService;
 import site.bitrun.cryptocurrency.global.api.upbit.domain.UpbitMarket;
 import site.bitrun.cryptocurrency.global.api.upbit.service.UpbitService;
 import site.bitrun.cryptocurrency.repository.HoldCryptoRepository;
@@ -20,12 +22,15 @@ public class ApiController {
     private final UpbitService upbitService;
     private final HoldCryptoService holdCryptoService;
     private final HoldCryptoRepository holdCryptoRepository;
+    private final DomesticExchangePriceService domesticExchangePriceService;
 
     @Autowired
-    public ApiController(UpbitService upbitService, HoldCryptoService holdCryptoService, HoldCryptoRepository holdCryptoRepository) {
+    public ApiController(UpbitService upbitService, HoldCryptoService holdCryptoService,
+                         HoldCryptoRepository holdCryptoRepository, DomesticExchangePriceService domesticExchangePriceService) {
         this.upbitService = upbitService;
         this.holdCryptoService = holdCryptoService;
         this.holdCryptoRepository = holdCryptoRepository;
+        this.domesticExchangePriceService = domesticExchangePriceService;
     }
 
     // 거래소 개별 암호화폐 정보 API
@@ -58,6 +63,12 @@ public class ApiController {
         UpbitMarketApiDto result = new UpbitMarketApiDto(findUpbitCryptoOne.getMarket(), findUpbitCryptoOne.getKoreanName(), findUpbitCryptoOne.getEnglishName(), buyCryptoCount);
 
         return result;
+    }
+
+    // 거래소 개별 암호화폐 국내 4대 거래소 시세 API
+    @GetMapping("/api/crypto/{code}/domestic-prices")
+    public DomesticExchangePriceResponseDto getDomesticExchangePrices(@PathVariable("code") String code) {
+        return domesticExchangePriceService.getDomesticPrices(code);
     }
 
     static class UpbitMarketApiDto {

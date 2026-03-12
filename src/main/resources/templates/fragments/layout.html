@@ -1,19 +1,15 @@
 <!DOCTYPE html>
-<!-- layout 관련 namespace 추가 선언 -->
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
-    <!-- config.html -->
+    <title>Crypto Mock</title>
     <th:block th:replace="~{fragments/config::configFragment}" ></th:block>
 </head>
 
-<!-- header.html -->
+<body class="min-h-screen bg-slate-50 text-slate-800">
 <header th:replace="~{fragments/header::headerFragment}"></header>
-
-<!-- 공통적이지 않은 부분이 들어가는 부분 -->
-<body class="d-flex flex-column min-vh-100" layout:fragment="content"></body>
-
-<!-- footer.html -->
+<main class="mx-auto w-full max-w-[1640px] px-4 py-6" layout:fragment="content"></main>
 <footer th:replace="~{fragments/footer::footerFragment}"></footer>
+</body>
 </html>

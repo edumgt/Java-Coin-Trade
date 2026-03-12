@@ -1,168 +1,269 @@
 # Crypto Mock Private
 
-Spring Boot + Thymeleaf 기반의 **가상 암호화폐 모의투자 웹 애플리케이션**입니다.  
-실시간 시세는 업비트 API/WebSocket을 활용하고, 시가총액 랭킹은 CoinMarketCap API를 주기적으로 수집하여 메인 화면에 제공합니다.
+Spring Boot + Thymeleaf 기반의 가상 암호화폐 모의투자 웹 애플리케이션입니다.  
+거래 화면에서 국내 4대 거래소(업비트/빗썸/코인원/코빗) 시세를 동시에 확인할 수 있고, UI는 **Tailwind CSS 기반**으로 구성되어 있습니다.
 
 ---
 
-## 1) 프로젝트 개요
+## 1) 주요 기능
 
-이 프로젝트는 아래의 학습/데모 목적을 갖고 있습니다.
-
-- 회원가입/로그인(세션 기반) 구현
-- KRW 마켓 중심의 암호화폐 매수/매도 로직 구현
-- 보유자산(평단, 수익률, 평가금액) 계산
-- 외부 시세 API 연동 및 스케줄링 수집
-- Thymeleaf + JavaScript(WebSocket) 기반 실시간 UI
-
-핵심적으로, “실거래소 주문”이 아니라 **내부 DB 상태를 기준으로 동작하는 모의투자 서비스**입니다.
+- Tailwind 기반 반응형 UI
+- 회원가입/로그인(세션 + BCrypt)
+- KRW 마켓 기준 모의 매수/매도
+- 보유자산(평가금액/수익률) 실시간 계산
+- 업비트 WebSocket 실시간 시세
+- 국내 4대 거래소 시세 비교 API (`/api/crypto/{code}/domestic-prices`)
+- Docker / Kubernetes / Amazon EKS 배포 구성 (DB 포함)
 
 ---
 
-## 2) 주요 기능
+## 2) 테스트 로그인 계정
 
-### 메인 페이지
-- CoinMarketCap 시가총액 Top100 데이터를 출력
-- 가격/등락률/시총 정보를 테이블로 확인
+앱 시작 시 아래 계정이 없으면 자동 생성됩니다.
 
-### 회원
-- 회원가입: 이메일 중복 체크, 비밀번호 확인, BCrypt 암호화 저장
-- 로그인/로그아웃: 세션(`LOGIN_MEMBER`) 기반 인증
-- 신규 회원은 기본 KRW 자산(예: 10,000,000원)으로 시작
-
-### 거래소(주문)
-- 업비트 KRW 마켓 목록 제공
-- 매수
-  - 주문 금액 입력(원화)
-  - 보유 KRW 초과 주문 방지
-  - 기존 보유 코인 재매수 시 평단/수량/총매수금액 재계산
-- 매도
-  - 보유 수량 초과 매도 방지
-  - 현재가 기준 평가금액을 KRW 자산에 반영
-  - 전량 매도 시 보유코인 레코드 제거
-
-### 보유자산
-- 보유 코인별 수량, 평단, 매수금액, 평가금액, 손익/수익률 표시
-- Highcharts 파이차트로 코인/KRW 비중 시각화
-
-### API/스케줄러
-- `/api/crypto/{code}`: 코인 기본 정보 + 로그인 사용자의 보유 수량 반환
-- 스케줄러
-  - CoinMarketCap Top100: 1시간 주기
-  - Upbit 거래 가능 마켓 저장: 매일 18시
+- `test1@test.com / 123456`
+- `test2@test.com / 123456`
 
 ---
 
 ## 3) 기술 스택
 
-- **Backend**: Java 17+, Spring Boot 3.1.2, Spring MVC, Spring Data JPA
-- **Template/UI**: Thymeleaf, Thymeleaf Layout Dialect, JavaScript
-- **Security**: Spring Security 의존성 + BCrypt(패스워드 인코더), 세션 인증
-- **DB**: MariaDB
-- **Infra/Build**: Maven
-- **외부 연동**:
+- Backend: Java 17, Spring Boot 3.1.2, Spring MVC, Spring Data JPA
+- Frontend: Thymeleaf, Tailwind CSS, JavaScript
+- Security: BCrypt + Session
+- DB: MariaDB
+- Infra: Docker, Docker Compose, Kubernetes, Amazon EKS
+- External API:
   - Upbit REST/WebSocket
+  - Bithumb REST
+  - Coinone REST
+  - Korbit REST
   - CoinMarketCap REST
 
 ---
 
-## 4) 프로젝트 구조
+## 4) Docker 실행
 
-```text
-src/main/java/site/bitrun/cryptocurrency
-├── controller
-│   ├── BasicController.java         # 메인/회원
-│   ├── TradeController.java         # 주문/보유자산
-│   └── api/ApiController.java       # 코인 정보 API
-├── service
-│   ├── MemberServiceImpl.java
-│   └── HoldCryptoServiceImpl.java
-├── global/api
-│   ├── coinmarketcap/*              # 시총 랭킹 수집/도메인
-│   └── upbit/*                      # 마켓 목록/현재가 처리
-├── scheduler/ApiScheduler.java      # 주기적 수집 작업
-├── repository/*
-├── domain/*
-└── interceptor/LoginCheckInterceptor.java
-
-src/main/resources
-├── templates/*                      # Thymeleaf 페이지
-├── static/js/*                      # 실시간 시세/차트 로직
-├── static/css/*
-└── application.properties
-```
-
----
-
-## 5) 실행 방법
-
-## 사전 요구사항
-- JDK 17 이상
-- Maven 3.9+
-- MariaDB 10.x
-
-### 1. DB 준비
-Docker 기반 DB 준비 + `db.sql` 반영 + 애플리케이션 DB 연동 설정은 아래 스크립트로 한 번에 처리할 수 있습니다.
+### 4-1. 실행
 
 ```bash
-./scripts/setup-docker-db.sh
+docker compose up -d --build
 ```
 
-스크립트가 수행하는 작업:
-- MariaDB 컨테이너 생성/기동
-- `db.sql` import
-- `src/main/resources/application.properties`의 datasource 값을 로컬 Docker DB로 변경
+### 4-2. 접속
 
-환경변수로 컨테이너명/비밀번호/포트 등을 변경할 수 있습니다.
-
-### 2. 설정 파일 확인
-`src/main/resources/application.properties`의 DB 접속정보를 현재 환경에 맞게 수정하세요.
-
-권장: 민감정보(API Key/DB 비밀번호)는 코드에 하드코딩하지 않고 환경변수 또는 별도 비밀 설정으로 관리하세요.
-
-### 3. 애플리케이션 실행
-```bash
-mvn spring-boot:run
-```
-
-브라우저 접속:
 - `http://localhost:8080`
 
----
+### 4-3. 종료
 
-## 6) 데이터 모델(핵심 테이블)
+```bash
+docker compose down
+```
 
-- `member`: 사용자 정보(이메일/암호화된 비밀번호/보유 KRW)
-- `upbit_market`: 업비트 마켓 코드(KRW-BTC 등)
-- `hold_crypto`: 사용자별 코인 보유 수량/평단/총매수금액
-- `crypto_rank`: CoinMarketCap Top100 캐시 데이터
+데이터까지 삭제:
 
-상세 DDL/샘플 데이터는 `db.sql` 참고.
-
----
-
-## 7) 요청 흐름 요약
-
-1. 스케줄러가 외부 API를 호출해 `crypto_rank`, `upbit_market`를 갱신
-2. 사용자가 회원가입/로그인 후 주문 페이지 진입
-3. 주문(매수/매도) 시 업비트 현재가 조회 후 내부 자산/보유코인 업데이트
-4. 보유자산 페이지에서 WebSocket/REST 데이터로 실시간 평가 반영
+```bash
+docker compose down -v
+```
 
 ---
 
-## 8) 알려진 주의사항
+## 5) Kubernetes 실행 (일반 k8s)
 
-- 외부 API(Upbit/CoinMarketCap) 장애 또는 네트워크 이슈 시 시세/랭킹 수집이 실패할 수 있습니다.
-- Maven 의존성 다운로드가 차단된 환경에서는 빌드가 실패할 수 있습니다.
-- `target/` 산출물이 저장소에 포함되어 있다면, 배포/협업 관점에서는 `.gitignore` 관리가 필요합니다.
+`k8s/base`는 앱 + MariaDB(in-cluster) 구성을 포함합니다.
+
+### 5-1. 이미지 준비
+
+```bash
+docker build -t java-crypto-mock-app:latest .
+```
+
+### 5-2. 배포
+
+```bash
+kubectl apply -k k8s/base
+```
+
+### 5-3. 접속 (포트포워드)
+
+```bash
+kubectl -n crypto-mock port-forward svc/crypto-mock-app 8080:80
+```
+
+브라우저: `http://localhost:8080`
 
 ---
 
-## 9) 개선 아이디어
+## 6) Amazon EKS 실행
 
-- 예외 처리 고도화(외부 API 타임아웃/재시도/폴백)
-- 테스트 코드 추가(서비스 레이어 계산 검증)
-- 인증 구조 개선(Spring Security 필터 체인 기반으로 정리)
-- 설정 분리(`application-{profile}.properties`, dotenv/secret manager)
-- 거래 히스토리(체결 내역) 테이블 추가
+`k8s/eks`는 **EKS + ALB Ingress + in-cluster MariaDB(컨테이너 DB)** 구성입니다.
 
+### 6-1. 사전 준비
+
+- EKS 클러스터
+- AWS Load Balancer Controller 설치
+- ECR 리포지토리 생성
+
+### 6-2. 이미지 빌드/푸시 (예시)
+
+```bash
+aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 123456789012.dkr.ecr.ap-northeast-2.amazonaws.com
+docker build -t java-crypto-mock:latest .
+docker tag java-crypto-mock:latest 123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/java-crypto-mock:latest
+docker push 123456789012.dkr.ecr.ap-northeast-2.amazonaws.com/java-crypto-mock:latest
+```
+
+### 6-3. 값 수정
+
+- `k8s/eks/app-deployment.yaml`의 ECR 이미지 경로
+- (필요 시) `k8s/eks/secret.yaml`의 DB 비밀번호
+- (필요 시) `k8s/eks/mariadb-pvc.yaml`의 저장 용량/스토리지 클래스
+
+### 6-4. 배포
+
+```bash
+kubectl apply -k k8s/eks
+```
+
+ALB 주소 확인:
+
+```bash
+kubectl -n crypto-mock get ingress crypto-mock-ingress
+```
+
+### 6-5. 순차 실행 SH (aws cli + eksctl + kubectl)
+
+아래는 이 저장소를 EKS에 올리기 위한 순차 실행 예시입니다.
+
+1. `01-env.sh` (환경 변수 및 도구 점검)
+
+```bash
+set -euo pipefail
+
+export AWS_REGION="ap-northeast-2"
+export CLUSTER_NAME="crypto-mock-eks"
+export APP_NAMESPACE="crypto-mock"
+export ECR_REPO="java-crypto-mock"
+export IMAGE_TAG="$(date +%Y%m%d%H%M%S)"
+export AWS_ACCOUNT_ID="$(aws sts get-caller-identity --query Account --output text)"
+export ECR_URI="${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${ECR_REPO}"
+
+aws --version
+eksctl version
+kubectl version --client
+```
+
+2. `02-create-infra.sh` (ECR + EKS 클러스터 생성)
+
+```bash
+set -euo pipefail
+
+aws ecr describe-repositories \
+  --repository-names "${ECR_REPO}" \
+  --region "${AWS_REGION}" >/dev/null 2>&1 || \
+aws ecr create-repository \
+  --repository-name "${ECR_REPO}" \
+  --image-scanning-configuration scanOnPush=true \
+  --region "${AWS_REGION}"
+
+eksctl create cluster \
+  --name "${CLUSTER_NAME}" \
+  --region "${AWS_REGION}" \
+  --version 1.30 \
+  --nodegroup-name "main-ng" \
+  --node-type "t3.medium" \
+  --nodes 2 \
+  --nodes-min 2 \
+  --nodes-max 4 \
+  --managed
+
+aws eks update-kubeconfig \
+  --name "${CLUSTER_NAME}" \
+  --region "${AWS_REGION}"
+```
+
+3. `03-build-push-image.sh` (이미지 빌드/푸시)
+
+```bash
+set -euo pipefail
+
+aws ecr get-login-password --region "${AWS_REGION}" | \
+docker login --username AWS --password-stdin "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+
+docker build -t "${ECR_REPO}:${IMAGE_TAG}" .
+docker tag "${ECR_REPO}:${IMAGE_TAG}" "${ECR_URI}:${IMAGE_TAG}"
+docker tag "${ECR_REPO}:${IMAGE_TAG}" "${ECR_URI}:latest"
+docker push "${ECR_URI}:${IMAGE_TAG}"
+docker push "${ECR_URI}:latest"
+```
+
+4. `04-deploy.sh` (매니페스트 배포 + 앱 이미지 교체)
+
+```bash
+set -euo pipefail
+
+kubectl apply -k k8s/eks
+kubectl -n "${APP_NAMESPACE}" set image deployment/crypto-mock-app app="${ECR_URI}:${IMAGE_TAG}"
+kubectl -n "${APP_NAMESPACE}" rollout status deployment/crypto-mock-app --timeout=300s
+```
+
+5. `05-verify.sh` (상태 확인)
+
+```bash
+set -euo pipefail
+
+kubectl -n "${APP_NAMESPACE}" get pods
+kubectl -n "${APP_NAMESPACE}" get svc
+kubectl -n "${APP_NAMESPACE}" get ingress
+
+echo "ALB DNS:"
+kubectl -n "${APP_NAMESPACE}" get ingress crypto-mock-ingress \
+  -o jsonpath='{.status.loadBalancer.ingress[0].hostname}'; echo
+```
+
+6. `06-cleanup.sh` (정리, 필요 시)
+
+```bash
+set -euo pipefail
+
+eksctl delete cluster --name "${CLUSTER_NAME}" --region "${AWS_REGION}"
+aws ecr batch-delete-image \
+  --repository-name "${ECR_REPO}" \
+  --image-ids imageTag=latest \
+  --region "${AWS_REGION}" || true
+```
+
+---
+
+## 7) AWS 아키텍처 (SVG)
+
+선이 복잡하지 않도록 단순화한 AWS 아이콘 스타일의 SVG 다이어그램입니다.  
+EKS 내부에서 앱과 MariaDB가 함께 동작하는 구조를 표현합니다.
+
+![AWS EKS Architecture](docs/architecture-eks.svg)
+
+---
+
+## 8) 화면 캡처
+
+1. Tailwind 홈 화면
+
+![Action 1](captures/action-1-tailwind-home.png)
+
+2. 거래 화면(BTC) + 멀티 선택(업비트 + 빗썸)
+
+![Action 2](captures/action-2-trade-btc-upbit-bithumb.png)
+
+3. 거래 화면(ETH) + 멀티 선택(코인원 + 코빗)
+
+![Action 3](captures/action-3-trade-eth-coinone-korbit.png)
+
+---
+
+## 9) 주요 경로
+
+- Docker: `Dockerfile`, `docker-compose.yml`
+- Kubernetes(base): `k8s/base/*`
+- EKS: `k8s/eks/*`
+- AWS 아키텍처 SVG: `docs/architecture-eks.svg`
+- 거래 화면: `src/main/resources/templates/trade/order.html`

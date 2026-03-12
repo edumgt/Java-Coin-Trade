@@ -1,84 +1,127 @@
 <!doctype html>
-<html lang="en"
+<html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/layout}">
-    <head>
-        <title>보유자산</title>
-        <style>
-            .hold_amount_title_cell {
-                width: 330px;
-            }
-            
-            .hold_amount_count_cell {
-                margin-left: auto;
-            }
-        </style>
-    </head>
-    <body layout:fragment="content">
-        <div class="container">
-            <div class="mt-4">
-                <h2 style="text-align: center">보유자산</h2>
-                <div class="row" style="align-items: center;">
-                    <div class="col-sm-6">
-                        <div class="d-flex border-bottom">
-                            <dl class="d-flex me-5 hold_amount_title_cell" ><dt style="margin-top: 14px">보유 KRW</dt><dd class="hold_amount_count_cell"><span id="member_asset" th:text="${#numbers.formatInteger(memberAsset,1,'COMMA')}" style="font-size: 25px">-</span><span class="text-muted ms-1">KRW</span></dd></dl>
-                            <dl class="d-flex hold_amount_title_cell"><dt style="margin-top: 14px">총 보유자산</dt><dd class="hold_amount_count_cell"><span id="total_member_asset" style="font-size: 25px">-</span><span class="text-muted ms-1">KRW</span></dd></dl>
-                        </div>
-                        <div class="d-flex">
-                            <dl class="d-flex me-5 hold_amount_title_cell mt-4"><dt>총매수금액</dt><dd class="hold_amount_count_cell"><span id="total_buy_krw" th:text="${#numbers.formatInteger(totalBuyKrw,1,'COMMA')}">-</span><span class="text-muted ms-1">KRW</span></dd></dl>
-                            <dl class="d-flex hold_amount_title_cell mt-4"><dt>총평가손익</dt><dd class="hold_amount_count_cell"><span id="total_krw_of_return" class="fw-bold">-</span><span class="text-muted ms-1">KRW</span></dd></dl>
-                        </div>
-                        <div class="d-flex">
-                            <dl class="d-flex me-5 hold_amount_title_cell"><dt>총평가금액</dt><dd class="hold_amount_count_cell"><span id="total_evaluation_krw">-</span><span class="text-muted ms-1">KRW</span></dd></dl>
-                            <dl class="d-flex hold_amount_title_cell"><dt>총평가수익률</dt><dd class="hold_amount_count_cell fw-bold"><span id="total_evaluation_rate_of_return" class="fw-bold">-</span><span class="text-muted ms-1">%</span></dd></dl>
-                        </div>
+<head>
+    <title>보유자산</title>
+</head>
+<body layout:fragment="content">
+<div class="space-y-6">
+    <section class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <h2 class="mb-4 text-center text-2xl font-bold text-slate-900">보유자산</h2>
+        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+            <div class="space-y-3">
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                        <p class="text-xs text-slate-500">보유 KRW</p>
+                        <p class="mt-1 text-2xl font-bold text-slate-800">
+                            <span id="member_asset" th:text="${#numbers.formatInteger(memberAsset,1,'COMMA')}">-</span>
+                            <span class="text-sm font-medium text-slate-500">KRW</span>
+                        </p>
                     </div>
-                    <div id="hold_asset_chart" class="col-sm-6"></div>
+                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                        <p class="text-xs text-slate-500">총 보유자산</p>
+                        <p class="mt-1 text-2xl font-bold text-slate-800">
+                            <span id="total_member_asset">-</span>
+                            <span class="text-sm font-medium text-slate-500">KRW</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div class="rounded-xl border border-slate-200 p-3">
+                        <p class="text-xs text-slate-500">총매수금액</p>
+                        <p class="mt-1 text-lg font-semibold text-slate-800">
+                            <span id="total_buy_krw" th:text="${#numbers.formatInteger(totalBuyKrw,1,'COMMA')}">-</span>
+                            <span class="text-sm font-medium text-slate-500">KRW</span>
+                        </p>
+                    </div>
+                    <div class="rounded-xl border border-slate-200 p-3">
+                        <p class="text-xs text-slate-500">총평가손익</p>
+                        <p class="mt-1 text-lg font-semibold">
+                            <span id="total_krw_of_return" class="fw-bold">-</span>
+                            <span class="text-sm font-medium text-slate-500">KRW</span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div class="rounded-xl border border-slate-200 p-3">
+                        <p class="text-xs text-slate-500">총평가금액</p>
+                        <p class="mt-1 text-lg font-semibold text-slate-800">
+                            <span id="total_evaluation_krw">-</span>
+                            <span class="text-sm font-medium text-slate-500">KRW</span>
+                        </p>
+                    </div>
+                    <div class="rounded-xl border border-slate-200 p-3">
+                        <p class="text-xs text-slate-500">총평가수익률</p>
+                        <p class="mt-1 text-lg font-semibold">
+                            <span id="total_evaluation_rate_of_return" class="fw-bold">-</span>
+                            <span class="text-sm font-medium text-slate-500">%</span>
+                        </p>
+                    </div>
                 </div>
             </div>
-
-            <div class="border-top">
-                <table class="table align-middle mb-0 bg-white">
-                    <thead class="bg-light">
-                    <tr class="text-center">
-                        <th>보유자산</th>
-                        <th>보유수량</th>
-                        <th>매수평균가</th>
-                        <th>매수금액</th>
-                        <th>평가금액</th>
-                        <th>평가손익(%)</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr th:each="holdCrypto : ${holdCryptoList}">
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <img th:src="@{|https://static.upbit.com/logos/${holdCrypto.marketCodeOnlySymbol}.png|}" alt="" style="width: 45px; height: 45px" />
-                                <div class="ms-3">
-                                    <p class="fw-bold mb-1" th:text="${holdCrypto.koreanName}">비트코인</p>
-                                    <p class="text-muted mb-0" th:text="${holdCrypto.marketCodeOnlySymbol}">BTC</p>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="text-align-table-right"><span th:id="|${holdCrypto.marketCode}-hold-count|" th:text="${#numbers.formatDecimal(holdCrypto.holdCount,1,'COMMA',8,'POINT')}">0.03535</span><span class="text-muted ms-1" th:text="${holdCrypto.marketCodeOnlySymbol}">BTC</span></td><!-- 보유수량 -->
-                        <td class="text-align-table-right"><span th:id="|${holdCrypto.marketCode}-buy-average|" th:text="${#numbers.formatDecimal(holdCrypto.buyAverage,1,'COMMA',4,'POINT')}">21,943,430</span><span class="text-muted ms-1">KRW</span></td><!-- 매수평균가 -->
-                        <td class="text-align-table-right"><span th:id="|${holdCrypto.marketCode}-buy-total-krw|" th:text="${#numbers.formatInteger(holdCrypto.buyTotalKrw,1,'COMMA')}">21,943,430</span><span class="text-muted ms-1">KRW</span></td><!-- 매수금액 -->
-                        <td class="text-align-table-right" style="background-color: #F5F5F5"><span class="fw-bold" th:id="|${holdCrypto.marketCode}-evaluation-krw|">21,943,430</span><span class="text-muted ms-1">KRW</span></td><!-- 평가금액 -->
-                        <td class="text-align-table-right">
-                            <p class="mb-1"><span class="fw-bold" th:id="|${holdCrypto.marketCode}-krw-of-return|">-</span><span class="text-muted ms-1">KRW</span></p>  <!-- 평가 손익 -->
-                            <p class="mb-0"><span class="fw-bold" th:id="|${holdCrypto.marketCode}-rate-of-return|">-</span><span class="text-muted ms-1">%</span></p>  <!-- 수익률 -->
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-
+            <div id="hold_asset_chart" class="min-h-[320px]"></div>
         </div>
-        <script th:inline="javascript">
-            const marketArrayList = [[${marketArrayList}]];
-            const holdCryptoList = [[${holdCryptoList}]];
-        </script>
-        <script th:src="@{/js/hold_crypto.js}" ></script>
-    </body>
+    </section>
+
+    <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <div class="overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+                <tr class="text-center">
+                    <th class="px-3 py-3 text-left">보유자산</th>
+                    <th class="px-3 py-3 text-right">보유수량</th>
+                    <th class="px-3 py-3 text-right">매수평균가</th>
+                    <th class="px-3 py-3 text-right">매수금액</th>
+                    <th class="px-3 py-3 text-right">평가금액</th>
+                    <th class="px-3 py-3 text-right">평가손익(%)</th>
+                </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                <tr th:each="holdCrypto : ${holdCryptoList}" class="hover:bg-slate-50">
+                    <td class="px-3 py-3">
+                        <div class="flex items-center gap-3">
+                            <img th:src="@{|https://static.upbit.com/logos/${holdCrypto.marketCodeOnlySymbol}.png|}" alt="" class="h-10 w-10 rounded-full border border-slate-200"/>
+                            <div>
+                                <p class="font-semibold text-slate-800" th:text="${holdCrypto.koreanName}">비트코인</p>
+                                <p class="text-xs text-slate-500" th:text="${holdCrypto.marketCodeOnlySymbol}">BTC</p>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="px-3 py-3 text-right">
+                        <span th:id="|${holdCrypto.marketCode}-hold-count|" th:text="${#numbers.formatDecimal(holdCrypto.holdCount,1,'COMMA',8,'POINT')}">0.03535</span>
+                        <span class="ml-1 text-xs text-slate-500" th:text="${holdCrypto.marketCodeOnlySymbol}">BTC</span>
+                    </td>
+                    <td class="px-3 py-3 text-right">
+                        <span th:id="|${holdCrypto.marketCode}-buy-average|" th:text="${#numbers.formatDecimal(holdCrypto.buyAverage,1,'COMMA',4,'POINT')}">21,943,430</span>
+                        <span class="ml-1 text-xs text-slate-500">KRW</span>
+                    </td>
+                    <td class="px-3 py-3 text-right">
+                        <span th:id="|${holdCrypto.marketCode}-buy-total-krw|" th:text="${#numbers.formatInteger(holdCrypto.buyTotalKrw,1,'COMMA')}">21,943,430</span>
+                        <span class="ml-1 text-xs text-slate-500">KRW</span>
+                    </td>
+                    <td class="bg-slate-50 px-3 py-3 text-right">
+                        <span class="font-semibold text-slate-800" th:id="|${holdCrypto.marketCode}-evaluation-krw|">21,943,430</span>
+                        <span class="ml-1 text-xs text-slate-500">KRW</span>
+                    </td>
+                    <td class="px-3 py-3 text-right">
+                        <p class="mb-1"><span class="font-semibold" th:id="|${holdCrypto.marketCode}-krw-of-return|">-</span><span class="ml-1 text-xs text-slate-500">KRW</span></p>
+                        <p class="mb-0"><span class="font-semibold" th:id="|${holdCrypto.marketCode}-rate-of-return|">-</span><span class="ml-1 text-xs text-slate-500">%</span></p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script th:inline="javascript">
+    const marketArrayList = [[${marketArrayList}]];
+    const holdCryptoList = [[${holdCryptoList}]];
+</script>
+<script th:src="@{/js/hold_crypto.js}" ></script>
+</body>
 </html>

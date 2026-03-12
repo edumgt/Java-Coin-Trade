@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="960" viewBox="0 0 1500 960" role="img" aria-label="AWS EKS architecture with VPC and subnet boundaries">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+      <polygon points="0,0 10,4 0,8" fill="#334155"/>
+    </marker>
+    <style>
+      .title { font: 700 27px 'Noto Sans KR', sans-serif; fill: #0f172a; }
+      .subtitle { font: 600 14px 'Noto Sans KR', sans-serif; fill: #475569; }
+      .zone-label { font: 700 12px 'Noto Sans KR', sans-serif; fill: #ffffff; }
+      .card-title { font: 700 16px 'Noto Sans KR', sans-serif; fill: #0f172a; }
+      .card-meta { font: 500 13px 'Noto Sans KR', sans-serif; fill: #334155; }
+      .note { font: 500 12px 'Noto Sans KR', sans-serif; fill: #334155; }
+
+      .cloud-boundary { fill: #ffffff; stroke: #94a3b8; stroke-width: 2.4; }
+      .vpc-boundary { fill: #f8fbff; stroke: #2563eb; stroke-width: 3; stroke-dasharray: 12 8; }
+      .public-subnet { fill: #eff9ff; stroke: #0ea5e9; stroke-width: 2.6; stroke-dasharray: 8 6; }
+      .private-subnet { fill: #ffffff; stroke: #64748b; stroke-width: 2.4; stroke-dasharray: 8 6; }
+
+      .card { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.8; }
+      .icon-box { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.4; }
+      .divider { stroke: #e2e8f0; stroke-width: 1.4; }
+      .icon { fill: #2563eb; }
+      .icon-warm { fill: #f59e0b; }
+
+      .edge { stroke: #334155; stroke-width: 2.2; fill: none; marker-end: url(#arrow); }
+      .edge-dash { stroke: #64748b; stroke-width: 2; stroke-dasharray: 7 6; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1500" height="960" fill="#f8fafc"/>
+  <text x="34" y="54" class="title">Crypto Mock on AWS - EKS / VPC / Subnet Architecture</text>
+  <text x="34" y="82" class="subtitle">Boundary lines follow AWS diagram style: AWS Cloud, VPC, Public Subnet, Private Subnet</text>
+
+  <!-- External -->
+  <g transform="translate(30,290)">
+    <rect class="card" x="0" y="0" width="240" height="140" rx="14"/>
+    <rect class="icon-box" x="16" y="16" width="64" height="108" rx="10"/>
+    <line class="divider" x1="92" y1="16" x2="92" y2="124"/>
+    <circle class="icon" cx="48" cy="52" r="16"/>
+    <rect class="icon" x="36" y="72" width="24" height="30" rx="12"/>
+    <text x="108" y="50" class="card-title">Client</text>
+    <text x="108" y="74" class="card-meta">Browser / Mobile</text>
+    <text x="108" y="96" class="card-meta">HTTPS Request</text>
+  </g>
+
+  <g transform="translate(30,500)">
+    <rect class="card" x="0" y="0" width="240" height="170" rx="14"/>
+    <rect class="icon-box" x="16" y="16" width="64" height="138" rx="10"/>
+    <line class="divider" x1="92" y1="16" x2="92" y2="154"/>
+    <rect class="icon" x="32" y="38" width="32" height="32" rx="6"/>
+    <rect class="icon" x="32" y="82" width="32" height="32" rx="6"/>
+    <text x="108" y="48" class="card-title">CI/CD</text>
+    <text x="108" y="72" class="card-meta">Docker Build</text>
+    <text x="108" y="94" class="card-meta">Image Push to ECR</text>
+    <text x="108" y="116" class="card-meta">kubectl apply</text>
+    <text x="108" y="138" class="card-meta">GitHub Actions / CodeBuild</text>
+  </g>
+
+  <!-- AWS Cloud -->
+  <rect class="cloud-boundary" x="300" y="92" width="1170" height="820" rx="18"/>
+  <rect x="324" y="114" width="178" height="30" rx="8" fill="#232f3e"/>
+  <text x="352" y="134" class="zone-label">AWS Cloud</text>
+  <text x="522" y="135" class="subtitle">Region: ap-northeast-2</text>
+
+  <!-- ECR -->
+  <g transform="translate(1170,126)">
+    <rect class="card" x="0" y="0" width="260" height="128" rx="14"/>
+    <rect class="icon-box" x="16" y="16" width="64" height="96" rx="10" fill="#fff7ed" stroke="#fdba74"/>
+    <line class="divider" x1="92" y1="16" x2="92" y2="112"/>
+    <rect class="icon-warm" x="28" y="40" width="40" height="24" rx="4"/>
+    <rect class="icon-warm" x="24" y="68" width="48" height="20" rx="4" fill="#fb923c"/>
+    <text x="108" y="50" class="card-title">Amazon ECR</text>
+    <text x="108" y="74" class="card-meta">Container Repository</text>
+    <text x="108" y="96" class="card-meta">Spring Boot Image</text>
+  </g>
+
+  <!-- VPC -->
+  <rect class="vpc-boundary" x="340" y="184" width="1090" height="700" rx="16"/>
+  <rect x="362" y="206" width="156" height="28" rx="7" fill="#2563eb"/>
+  <text x="392" y="225" class="zone-label">Amazon VPC</text>
+
+  <!-- Public Subnet -->
+  <rect class="public-subnet" x="380" y="242" width="1010" height="172" rx="14"/>
+  <rect x="398" y="258" width="254" height="24" rx="6" fill="#0ea5e9"/>
+  <text x="420" y="275" class="zone-label">Public Subnet (ALB / Ingress)</text>
+
+  <g transform="translate(430,278)">
+    <rect class="card" x="0" y="0" width="300" height="108" rx="12"/>
+    <rect class="icon-box" x="14" y="14" width="66" height="80" rx="10"/>
+    <line class="divider" x1="92" y1="14" x2="92" y2="94"/>
+    <polygon class="icon-warm" points="47,30 68,44 47,58 26,44"/>
+    <text x="108" y="46" class="card-title">Application Load Balancer</text>
+    <text x="108" y="70" class="card-meta">Internet-facing Listener</text>
+    <text x="108" y="90" class="card-meta">HTTP/HTTPS Routing</text>
+  </g>
+
+  <g transform="translate(790,278)">
+    <rect class="card" x="0" y="0" width="330" height="108" rx="12"/>
+    <rect class="icon-box" x="14" y="14" width="66" height="80" rx="10"/>
+    <line class="divider" x1="92" y1="14" x2="92" y2="94"/>
+    <circle class="icon" cx="47" cy="44" r="18"/>
+    <text x="108" y="46" class="card-title">Ingress Controller</text>
+    <text x="108" y="70" class="card-meta">AWS Load Balancer Controller</text>
+    <text x="108" y="90" class="card-meta">Target Type: IP</text>
+  </g>
+
+  <!-- Private App Subnet -->
+  <rect class="private-subnet" x="380" y="432" width="690" height="420" rx="14"/>
+  <rect x="398" y="448" width="278" height="24" rx="6" fill="#475569"/>
+  <text x="420" y="465" class="zone-label">Private Subnet (EKS Application)</text>
+
+  <g transform="translate(430,490)">
+    <rect class="card" x="0" y="0" width="300" height="128" rx="12"/>
+    <rect class="icon-box" x="14" y="14" width="66" height="100" rx="10"/>
+    <line class="divider" x1="92" y1="14" x2="92" y2="114"/>
+    <polygon class="icon" points="47,30 64,40 64,60 47,70 30,60 30,40"/>
+    <text x="108" y="46" class="card-title">EKS Node Group</text>
+    <text x="108" y="70" class="card-meta">Managed Nodes / Fargate</text>
+    <text x="108" y="92" class="card-meta">Pod Scheduling</text>
+    <text x="108" y="112" class="card-meta">Auto Scaling</text>
+  </g>
+
+  <g transform="translate(430,662)">
+    <rect class="card" x="0" y="0" width="300" height="128" rx="12"/>
+    <rect class="icon-box" x="14" y="14" width="66" height="100" rx="10"/>
+    <line class="divider" x1="92" y1="14" x2="92" y2="114"/>
+    <rect class="icon" x="30" y="34" width="34" height="24" rx="4"/>
+    <rect class="icon" x="30" y="64" width="34" height="24" rx="4" fill="#3b82f6"/>
+    <text x="108" y="46" class="card-title">Kubernetes Service</text>
+    <text x="108" y="70" class="card-meta">ClusterIP Service</text>
+    <text x="108" y="92" class="card-meta">Port 80 to 8080</text>
+    <text x="108" y="112" class="card-meta">Stable Endpoint</text>
+  </g>
+
+  <g transform="translate(770,552)">
+    <rect class="card" x="0" y="0" width="270" height="176" rx="12"/>
+    <rect class="icon-box" x="14" y="14" width="66" height="148" rx="10"/>
+    <line class="divider" x1="92" y1="14" x2="92" y2="162"/>
+    <rect class="icon" x="28" y="34" width="38" height="28" rx="4"/>
+    <rect class="icon" x="28" y="72" width="38" height="28" rx="4" fill="#3b82f6"/>
+    <rect class="icon" x="28" y="110" width="38" height="28" rx="4" fill="#60a5fa"/>
+    <text x="108" y="46" class="card-title">Spring Boot Pods</text>
+    <text x="108" y="70" class="card-meta">Replica: 2</text>
+    <text x="108" y="92" class="card-meta">Container Port: 8080</text>
+    <text x="108" y="114" class="card-meta">Tailwind UI + REST API</text>
+    <text x="108" y="136" class="card-meta">Crypto Price Aggregation</text>
+  </g>
+
+  <!-- Private DB Subnet -->
+  <rect class="private-subnet" x="1090" y="432" width="300" height="420" rx="14"/>
+  <rect x="1108" y="448" width="252" height="24" rx="6" fill="#475569"/>
+  <text x="1128" y="465" class="zone-label">Private Subnet (Database)</text>
+
+  <g transform="translate(1130,560)">
+    <rect class="card" x="0" y="0" width="230" height="170" rx="12"/>
+    <rect class="icon-box" x="14" y="14" width="66" height="142" rx="10" fill="#fff7ed" stroke="#fdba74"/>
+    <line class="divider" x1="92" y1="14" x2="92" y2="156"/>
+    <ellipse class="icon-warm" cx="47" cy="44" rx="20" ry="9"/>
+    <rect class="icon-warm" x="27" y="44" width="40" height="30"/>
+    <ellipse cx="47" cy="74" rx="20" ry="9" fill="#d97706"/>
+    <text x="108" y="46" class="card-title">MariaDB Pod</text>
+    <text x="108" y="70" class="card-meta">MariaDB</text>
+    <text x="108" y="92" class="card-meta">Schema: mockinv</text>
+    <text x="108" y="114" class="card-meta">member, hold_crypto</text>
+    <text x="108" y="136" class="card-meta">Stateful PVC + Service</text>
+  </g>
+
+  <!-- Flow lines -->
+  <path class="edge" d="M270 360 L430 332"/>
+  <path class="edge" d="M730 332 L790 332"/>
+  <path class="edge" d="M955 386 V648 H580"/>
+  <path class="edge" d="M730 726 H770"/>
+  <path class="edge" d="M1040 640 H1130"/>
+  <path class="edge-dash" d="M270 590 H320 V190 H1170"/>
+  <path class="edge-dash" d="M1170 190 L980 490"/>
+
+  <text x="292" y="346" class="note">HTTPS</text>
+  <text x="742" y="320" class="note">Forward</text>
+  <text x="968" y="520" class="note">Ingress Route</text>
+  <text x="748" y="716" class="note">Service to Pod</text>
+  <text x="1052" y="626" class="note">JDBC</text>
+  <text x="520" y="184" class="note">CI/CD Deploy</text>
+  <text x="1038" y="332" class="note">Image Pull</text>
+
+  <rect x="380" y="860" width="1010" height="34" rx="8" fill="#eff6ff" stroke="#93c5fd"/>
+  <text x="404" y="882" class="note">Run target: Docker Compose (local), Kubernetes (base), Amazon EKS (ALB + in-cluster MariaDB)</text>
+</svg>

@@ -1,33 +1,83 @@
 <th:block th:fragment="orderInfoFragment">
-    <div class="me-4">
-        <div class="d-flex">
-            <span class="me-2"><h2 id="crypto_korean_name">-</h2></span>
-            <span class="align-self-center" id="crypto_symbol_name">-</span>
+    <div class="space-y-4">
+        <div class="flex items-end gap-2">
+            <h2 id="crypto_korean_name" class="text-4xl font-black text-slate-800">-</h2>
+            <span class="pb-1 text-lg text-slate-500" id="crypto_symbol_name">-</span>
         </div>
-        <!-- chart widget -->
-        <div id="trading_chart_view"></div>
+        <div id="trading_chart_view" class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"></div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div class="flex items-center gap-2">
+                <h5 class="text-lg font-bold text-slate-800">국내 4대 거래소 시세 비교 (<span id="domestic_price_symbol">BTC</span>)</h5>
+                <small id="domestic_price_updated_at" class="ml-auto text-xs text-slate-500">-</small>
+            </div>
+            <div class="mt-3 flex flex-wrap items-center gap-2">
+                <label for="domestic_exchange_select" class="text-sm font-semibold text-slate-700">거래소 선택</label>
+                <select id="domestic_exchange_select" class="h-24 rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs shadow-sm" size="4" multiple>
+                    <option value="UPBIT" selected>업비트</option>
+                    <option value="BITHUMB" selected>빗썸</option>
+                    <option value="COINONE" selected>코인원</option>
+                    <option value="KORBIT" selected>코빗</option>
+                </select>
+                <small class="text-xs text-slate-500">Ctrl/Cmd + 클릭으로 다중 선택</small>
+            </div>
+            <div class="mt-3 overflow-x-auto">
+                <table class="min-w-full text-sm">
+                    <thead class="bg-slate-50 text-xs uppercase text-slate-500">
+                    <tr>
+                        <th scope="col" class="px-3 py-2 text-left">거래소</th>
+                        <th scope="col" class="px-3 py-2 text-right">현재가(KRW)</th>
+                    </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                    <tr id="domestic-row-UPBIT">
+                        <td class="px-3 py-2 font-semibold text-slate-700">업비트</td>
+                        <td id="domestic-price-UPBIT" class="px-3 py-2 text-right font-bold text-slate-800">-</td>
+                    </tr>
+                    <tr id="domestic-row-BITHUMB">
+                        <td class="px-3 py-2 font-semibold text-slate-700">빗썸</td>
+                        <td id="domestic-price-BITHUMB" class="px-3 py-2 text-right font-bold text-slate-800">-</td>
+                    </tr>
+                    <tr id="domestic-row-COINONE">
+                        <td class="px-3 py-2 font-semibold text-slate-700">코인원</td>
+                        <td id="domestic-price-COINONE" class="px-3 py-2 text-right font-bold text-slate-800">-</td>
+                    </tr>
+                    <tr id="domestic-row-KORBIT">
+                        <td class="px-3 py-2 font-semibold text-slate-700">코빗</td>
+                        <td id="domestic-price-KORBIT" class="px-3 py-2 text-right font-bold text-slate-800">-</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
     <!-- TradingView Widget BEGIN -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script type="text/javascript">
 
+        let domesticPriceTimer = null;
+        let selectedDomesticMarketCode = 'KRW-BTC';
+        const domesticExchangeCodes = ['UPBIT', 'BITHUMB', 'COINONE', 'KORBIT'];
+        let latestDomesticPriceMap = {};
+
         // 화면 로딩시 비트코인 차트 및 정보 호출
         window.addEventListener('DOMContentLoaded', function () {
+            initializeDomesticExchangeSelect();
             getCryptoChartAndData('KRW-BTC');
         });
 
         // 차트 & 암호화폐 정보
         function getCryptoChartAndData(marketCode) {
+            startDomesticPricePolling(marketCode);
 
             let temps = marketCode.split("-");
             let chartSymbol = temps[1];
 
             // chart
             new TradingView.widget({
-                    "width": 900,
-                    "height": 500,
-                    // autosize: true,
+                    "width": "100%",
+                    "height": 520,
                     custom_font_family: "'Noto Sans KR', sans-serif",
                     symbol: "UPBIT:" + chartSymbol + "KRW", // symbol: "UPBIT:BTCKRW"
                     interval: "D",
@@ -69,23 +119,140 @@
                     document.getElementById('buyMarketCode').value = marketCode; // 넘겨줄 매수 암호화폐 market code
                     document.getElementById('sellMarketCode').value = marketCode; // 넘겨줄 매도 암호화폐 market code
                 } else { // 실패
-                    
                     document.getElementById('crypto_korean_name').innerText = "비트코인"; // 상단 한글명
                     document.getElementById('crypto_symbol_name').innerText = "KRW-BTC"; // 상단 마켓코드
                     document.getElementById('buy_symbol_name').innerText = `비트코인(BTC)`; // 하단 매수 마켓코드
                     document.getElementById('sell_symbol_name').innerText = `비트코인(BTC)`; // 하단 매도 마켓코드
-                    document.getElementById('holdCryptoCount').innerText = resultJson.buyCryptoCount; // 매도 가능 개수
-                    document.getElementById('holdCryptoSymbol').innerText = cryptoSymbol; // 매도 가능 개수
+                    document.getElementById('holdCryptoCount').innerText = 0; // 매도 가능 개수
+                    document.getElementById('holdCryptoSymbol').innerText = "BTC"; // 매도 가능 개수
                     document.getElementById('sellCryptoSymbol').innerText = `(BTC)`; // 매도 개수 단위( ex) BTC, ETH ..)
 
                     document.getElementById('buyMarketCode').value = "KRW-BTC"; // 넘겨줄 매수 암호화폐 market code
                     document.getElementById('sellMarketCode').value = "KRW-BTC"; // 넘겨줄 매도 암호화폐 market code
-                    
-                    
+
                     console.error(xhr.status, xhr.statusText);
                 }
             };
 
+        }
+
+        function startDomesticPricePolling(marketCode) {
+            selectedDomesticMarketCode = marketCode;
+            renderDomesticPricePlaceholder();
+            fetchDomesticExchangePrices(marketCode);
+
+            if (domesticPriceTimer !== null) {
+                clearInterval(domesticPriceTimer);
+            }
+
+            domesticPriceTimer = setInterval(() => {
+                fetchDomesticExchangePrices(selectedDomesticMarketCode);
+            }, 5000);
+        }
+
+        function fetchDomesticExchangePrices(marketCode) {
+            fetch('/api/crypto/' + encodeURIComponent(marketCode) + '/domestic-prices')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('HTTP ' + response.status);
+                    }
+                    return response.json();
+                })
+                .then(result => {
+                    document.getElementById('domestic_price_symbol').innerText = result.symbol || 'BTC';
+                    document.getElementById('domestic_price_updated_at').innerText = '갱신 ' + formatUpdatedAt(result.fetchedAt);
+
+                    latestDomesticPriceMap = {};
+                    (result.prices || []).forEach(priceItem => {
+                        latestDomesticPriceMap[priceItem.exchangeCode] = priceItem.tradePriceKrw;
+                    });
+                    renderDomesticPriceRows();
+                })
+                .catch(error => {
+                    console.log('국내 거래소 시세 조회 실패', error);
+                    document.getElementById('domestic_price_updated_at').innerText = '갱신 실패';
+                    renderDomesticPricePlaceholder();
+                });
+        }
+
+        function initializeDomesticExchangeSelect() {
+            const selectElement = document.getElementById('domestic_exchange_select');
+            if (!selectElement) {
+                return;
+            }
+
+            selectElement.addEventListener('change', () => {
+                ensureDomesticExchangeSelection();
+                renderDomesticPriceRows();
+            });
+        }
+
+        function getSelectedDomesticExchangeCodes() {
+            const selectElement = document.getElementById('domestic_exchange_select');
+            if (!selectElement) {
+                return [...domesticExchangeCodes];
+            }
+
+            return Array.from(selectElement.selectedOptions).map(option => option.value);
+        }
+
+        function ensureDomesticExchangeSelection() {
+            const selectedCodes = getSelectedDomesticExchangeCodes();
+            if (selectedCodes.length > 0) {
+                return selectedCodes;
+            }
+
+            const selectElement = document.getElementById('domestic_exchange_select');
+            if (!selectElement || selectElement.options.length === 0) {
+                return [];
+            }
+
+            selectElement.options[0].selected = true;
+            return getSelectedDomesticExchangeCodes();
+        }
+
+        function renderDomesticPricePlaceholder() {
+            latestDomesticPriceMap = {};
+            renderDomesticPriceRows();
+        }
+
+        function renderDomesticPriceRows() {
+            const selectedCodes = ensureDomesticExchangeSelection();
+
+            domesticExchangeCodes.forEach(exchangeCode => {
+                const rowElement = document.getElementById('domestic-row-' + exchangeCode);
+                const priceElement = document.getElementById('domestic-price-' + exchangeCode);
+                const isSelected = selectedCodes.includes(exchangeCode);
+
+                if (rowElement) {
+                    rowElement.style.display = isSelected ? '' : 'none';
+                }
+
+                if (priceElement && isSelected) {
+                    const price = Object.prototype.hasOwnProperty.call(latestDomesticPriceMap, exchangeCode)
+                        ? latestDomesticPriceMap[exchangeCode]
+                        : null;
+                    priceElement.innerText = formatPrice(price);
+                }
+            });
+        }
+
+        function formatPrice(price) {
+            if (price === null || price === undefined) {
+                return '-';
+            }
+            return new Intl.NumberFormat('ko-KR').format(price);
+        }
+
+        function formatUpdatedAt(timestamp) {
+            if (!timestamp) {
+                return '-';
+            }
+
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString('ko-KR', {
+                hour12: false
+            });
         }
 
     </script>

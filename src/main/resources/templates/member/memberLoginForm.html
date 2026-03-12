@@ -4,69 +4,38 @@
       layout:decorate="~{fragments/layout}">
 
 <body layout:fragment="content">
-    <style>
-        .divider:after,
-        .divider:before {
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #eee;
-        }
-    </style>
-    <div class="container py-5 h-100">
-        <div class="row d-flex align-items-center justify-content-center h-100">
-            <div class="col-md-8 col-lg-7 col-xl-6">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/draw2.svg"
-                     class="img-fluid" alt="Phone image">
-            </div>
+<div class="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+    <h1 class="text-center text-2xl font-bold text-slate-900">로그인</h1>
+    <p class="mt-2 text-center text-sm text-slate-500">모의투자 서비스를 계속 사용하려면 로그인하세요.</p>
 
-            <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
-                <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">로그인</p>
-
-                <form action="/member/login" th:action th:object="${memberLoginForm}" method="post">
-                    <div th:if="${#fields.hasGlobalErrors()}" class="text-danger mb-3">
-                        <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
-                    </div>
-                    <!-- Email input -->
-                    <div class="form-outline mb-4">
-                        <input type="email" th:field="*{email}" id="email" class="form-control form-control-lg" />
-                        <label class="form-label" for="email">Email address</label>
-                        <div class="form-helper text-danger" th:errors="*{email}">email 오류</div>
-                    </div>
-
-                    <!-- Password input -->
-                    <div class="form-outline mb-4">
-                        <input type="password" th:field="*{password}" id="password" class="form-control form-control-lg" />
-                        <label class="form-label" for="password">Password</label>
-                        <div class="form-helper text-danger" th:errors="*{password}">password 오류</div>
-                    </div>
-
-                    <!--<div class="d-flex justify-content-around align-items-center mb-4">
-                        &lt;!&ndash; Checkbox &ndash;&gt;
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="form1Example3" checked />
-                            <label class="form-check-label" for="form1Example3"> Remember me </label>
-                        </div>
-                        <a href="#!">Forgot password?</a>
-                    </div>-->
-
-                    <!-- Submit button -->
-                    <button type="submit" class="btn btn-info btn-lg btn-block">로그인</button>
-                    <button type="button" th:onclick="|location.href='@{/member/register}'|" class="btn btn-primary btn-lg btn-block">회원가입</button>
-
-                    <!--<div class="divider d-flex align-items-center my-4">
-                        <p class="text-center fw-bold mx-3 mb-0 text-muted">OR</p>
-                    </div>
-
-                    <a class="btn btn-primary btn-lg btn-block" style="background-color: #3b5998" href="#!"
-                       role="button">
-                        <i class="fab fa-facebook-f me-2"></i>Continue with Facebook
-                    </a>
-                    <a class="btn btn-primary btn-lg btn-block" style="background-color: #55acee" href="#!"
-                       role="button">
-                        <i class="fab fa-twitter me-2"></i>Continue with Twitter</a>-->
-                </form>
-            </div>
+    <form action="/member/login" th:action th:object="${memberLoginForm}" method="post" class="mt-6 space-y-4">
+        <div th:if="${#fields.hasGlobalErrors()}" class="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-600">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}">전체 오류 메시지</p>
         </div>
-    </div>
+
+        <div>
+            <label class="mb-1 block text-sm font-semibold text-slate-700" for="email">Email</label>
+            <input type="email" th:field="*{email}" id="email"
+                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none ring-brand-500 transition focus:border-brand-500 focus:ring-1"/>
+            <div class="mt-1 text-xs text-rose-600" th:errors="*{email}">email 오류</div>
+        </div>
+
+        <div>
+            <label class="mb-1 block text-sm font-semibold text-slate-700" for="password">Password</label>
+            <input type="password" th:field="*{password}" id="password"
+                   class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none ring-brand-500 transition focus:border-brand-500 focus:ring-1"/>
+            <div class="mt-1 text-xs text-rose-600" th:errors="*{password}">password 오류</div>
+        </div>
+
+        <button type="submit"
+                class="w-full rounded-lg bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-700">
+            로그인
+        </button>
+        <button type="button" th:onclick="|location.href='@{/member/register}'|"
+                class="w-full rounded-lg bg-slate-100 px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">
+            회원가입
+        </button>
+    </form>
+</div>
 </body>
+</html>

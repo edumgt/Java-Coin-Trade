@@ -3,6 +3,15 @@
 
 td, th { vertical-align: middle; }
 
+.brand-logo-text {
+    color: #1160ff;
+    font-size: 31px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1;
+    margin-right: 8px;
+}
+
 .main-banner {
     display: flex;
     align-items: center;

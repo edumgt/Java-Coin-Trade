@@ -1,0 +1,44 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# IDE / editor settings
+.idea/
+.vscode/
+*.iml
+
+# Build outputs
+target/
+build/
+out/
+
+# Logs and runtime dumps
+*.log
+logs/
+hs_err_pid*
+replay_pid*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Node / test artifacts (for capture scripts)
+node_modules/
+.npm/
+.pnpm-store/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+playwright-report/
+test-results/
+.playwright/
+
+# Generic temp files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+*~

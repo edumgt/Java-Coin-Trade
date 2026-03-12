@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org" >
-<header class="p-3 border-bottom" th:fragment="headerFragment">
-    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
-        <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 link-body-emphasis text-decoration-none">
-            <img th:src="@{/img/logo_120.svg}" alt="logo" />
+<header class="border-b border-slate-200 bg-white" th:fragment="headerFragment">
+    <div class="mx-auto flex w-full max-w-[1640px] items-center justify-between px-4 py-3">
+        <a href="/" class="flex items-center gap-3">
+            <span class="brand-logo-text">EDUMGT</span>
         </a>
 
-        <ul class="nav col-6 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-            <li><a th:href="@{/trade/order}" class="nav-link px-2 link-body-emphasis">거래소</a></li>
-            <li><a th:href="@{/trade/hold/crypto}" class="nav-link px-2 link-body-emphasis">보유자산</a></li>
-            <!--<li><a href="#" class="nav-link px-2 link-body-emphasis">Customers</a></li>
-            <li><a href="#" class="nav-link px-2 link-body-emphasis">Products</a></li>-->
-        </ul>
+        <nav class="ml-6 mr-auto">
+            <ul class="flex items-center gap-2 text-sm font-semibold text-slate-600">
+                <li><a th:href="@{/trade/order}" class="rounded-lg px-3 py-2 transition hover:bg-slate-100 hover:text-slate-900">거래소</a></li>
+                <li><a th:href="@{/trade/hold/crypto}" class="rounded-lg px-3 py-2 transition hover:bg-slate-100 hover:text-slate-900">보유자산</a></li>
+            </ul>
+        </nav>
 
-        <div th:if="${session.loginMember != null}" class="d-flex justify-content-center">
-            <span th:text="|${session.loginMember.username}님, 안녕하세요!|" class="align-self-center mx-3">님, 안녕하세요!</span>
-            <button type="button" th:onclick="|location.href='@{/member/logout}'|" class="btn btn-danger">로그아웃</button>
+        <div th:if="${session.loginMember != null}" class="flex items-center gap-3">
+            <span th:text="|${session.loginMember.username}님, 안녕하세요!|" class="text-sm text-slate-700">님, 안녕하세요!</span>
+            <button type="button" th:onclick="|location.href='@{/member/logout}'|" class="rounded-lg bg-rose-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-rose-700">로그아웃</button>
         </div>
 
-        <div th:if="${session.loginMember == null}">
-            <button type="button" th:onclick="|location.href='@{/member/login}'|" class="btn btn-info">로그인</button>
-            <button type="button" th:onclick="|location.href='@{/member/register}'|" class="btn btn-primary">회원가입</button>
+        <div th:if="${session.loginMember == null}" class="flex items-center gap-2">
+            <button type="button" th:onclick="|location.href='@{/member/login}'|" class="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-200">로그인</button>
+            <button type="button" th:onclick="|location.href='@{/member/register}'|" class="rounded-lg bg-brand-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-700">회원가입</button>
         </div>
-
     </div>
 </header>
 </html>
